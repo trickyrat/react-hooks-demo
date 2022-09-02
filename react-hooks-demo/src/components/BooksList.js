@@ -16,8 +16,9 @@ const BooksList = () => {
   const retrieveBooks = () => {
     BookDataService.getAll()
       .then(response => {
-        setBooks(response.data);
-        console.log(response.data);
+        console.log(response);
+        setBooks(response.data.data);
+        console.log(response.data.data);
       })
       .catch(e => {
         console.log(e);

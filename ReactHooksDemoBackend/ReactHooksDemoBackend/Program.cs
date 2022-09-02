@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 
 using ReactHooksDemoBackend.Data;
@@ -18,6 +19,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+const string ReactOrigins = "React";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: ReactOrigins,
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000");
+        });
+});
 builder.Services.AddScoped<IBookService, BookService>();
 
 var app = builder.Build();
@@ -36,35 +47,37 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(ReactOrigins);
 
-app.MapGet("/books", async (string? title, IBookService bookService) =>
+
+app.MapGet("/api/books", async (string? title, IBookService bookService) =>
 {
     var books = await bookService.GetListAsync(title);
     var dto = new ListResponseDto<Book> { Data = books };
     return Results.Json(dto);
 }).WithTags("Books").WithName("Books");
 
-app.MapGet("/books/{id}", async (int id, IBookService bookService) =>
+app.MapGet("/api/books/{id}", async (int id, IBookService bookService) =>
 {
     var book = await bookService.GetAsync(id);
     return Results.Json(new { Data = book });
 }).WithTags("Books");
 
 
-app.MapPut("/books/{id}", async (int id, Book entityToUpdate, IBookService bookService) =>
+app.MapPut("/api/books/{id}", async (int id, Book entityToUpdate, IBookService bookService) =>
 {
     var book = await bookService.UpdateAsync(id, entityToUpdate);
     return Results.Json(new { Data = book });
 }).WithTags("Books");
 
-app.MapPost("/books", async (Book enityToAdd, IBookService bookService) =>
+app.MapPost("/api/books", async (Book enityToAdd, IBookService bookService) =>
 {
     var book = await bookService.InsertAsync(enityToAdd);
     return Results.Json(new { Data = book });
 }).WithTags("Books");
 
 
-app.MapDelete("/books/{id}", async (int id, IBookService bookService) =>
+app.MapDelete("/api/books/{id}", async (int id, IBookService bookService) =>
 {
     await bookService.DeleteAsync(id);
     return Results.Json(new { Data = "", Message = "Delete successfully." });
