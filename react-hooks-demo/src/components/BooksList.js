@@ -16,9 +16,7 @@ const BooksList = () => {
   const retrieveBooks = () => {
     BookDataService.getAll()
       .then(response => {
-        console.log(response);
         setBooks(response.data.data);
-        console.log(response.data.data);
       })
       .catch(e => {
         console.log(e);
@@ -36,18 +34,25 @@ const BooksList = () => {
   const removeAllBooks = () => {
     BookDataService.removeAll()
       .then(response => {
-        console.log(response.data);
         refreshList();
       })
       .catch(e => {
         console.log(e);
       });
   };
+  const removeBook = (id) => {
+    BookDataService.remove(id)
+      .then(response => {
+        refreshList();
+      })
+      .catch(e => {
+        console.log(e);
+      })
+  }
   const findByTitle = () => {
     BookDataService.findByTitle(searchTitle)
       .then(response => {
-        setBooks(response.data);
-        console.log(response.data);
+        setBooks(response.data.data);
       })
       .catch(e => {
         console.log(e);
@@ -55,7 +60,7 @@ const BooksList = () => {
   };
   return (
     <div className="list row">
-      <div className="col-md-8">
+      <div className="col-md-6">
         <div className="input-group mb-3">
           <input
             type="text"
@@ -75,22 +80,35 @@ const BooksList = () => {
           </div>
         </div>
       </div>
-      <div className="col-md-6">
+      <div className="col-md-12">
         <h4>Books List</h4>
-        <ul className="list-group">
-          {Books &&
-            Books.map((Book, index) => (
-              <li
-                className={
-                  "list-group-item " + (index === currentIndex ? "active" : "")
-                }
-                onClick={() => setActiveBook(Book, index)}
-                key={index}
-              >
-                {Book.title}
-              </li>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Books && Books.map((Book, index) => (
+              <tr key={Book.id} className={(index === currentIndex ? "table-active" : "")}>
+                <th scope="row">{Book.id}</th>
+                <td>{Book.title}</td>
+                <td>{Book.author}</td>
+                <td className="row">
+                  <div className="col">
+                    <button type="button" className="btn btn-primary column" onClick={() => setActiveBook(Book, index)}>Details</button>
+                  </div>
+                  <div className="col">
+                    <button type="button" className="btn btn-danger column" onClick={() => removeBook(Book.id)}>Delete</button>
+                  </div>
+                </td>
+              </tr>
             ))}
-        </ul>
+          </tbody>
+        </table>
         <button
           className="m-3 btn btn-sm btn-danger"
           onClick={removeAllBooks}
