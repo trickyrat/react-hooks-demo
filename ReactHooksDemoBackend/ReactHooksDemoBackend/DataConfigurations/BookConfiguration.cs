@@ -33,6 +33,11 @@ namespace ReactHooksDemoBackend.DataConfigurations
                .IsUnicode()
                .HasDefaultValue(string.Empty)
                .IsRequired();
+
+            builder.Property(b => b.Published)
+               .HasColumnType("bit")
+               .HasDefaultValue(false)
+               .IsRequired();
         }
     }
 }

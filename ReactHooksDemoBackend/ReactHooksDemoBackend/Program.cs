@@ -60,20 +60,20 @@ app.MapGet("/api/books", async (string? title, IBookService bookService) =>
 app.MapGet("/api/books/{id}", async (int id, IBookService bookService) =>
 {
     var book = await bookService.GetAsync(id);
-    return Results.Json(new { Data = book });
+    return Results.Json(book);
 }).WithTags("Books");
 
 
 app.MapPut("/api/books/{id}", async (int id, Book entityToUpdate, IBookService bookService) =>
 {
     var book = await bookService.UpdateAsync(id, entityToUpdate);
-    return Results.Json(new { Data = book });
+    return Results.Json(book);
 }).WithTags("Books");
 
 app.MapPost("/api/books", async (Book enityToAdd, IBookService bookService) =>
 {
     var book = await bookService.InsertAsync(enityToAdd);
-    return Results.Json(new { Data = book });
+    return Results.Json(book);
 }).WithTags("Books");
 
 
