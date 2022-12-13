@@ -1,6 +1,7 @@
 import { createContext, useContext, FC, Dispatch } from "react";
 import { useImmerReducer } from "use-immer";
 import { DragItem } from "../interfaces/DragItem";
+import { withInitialState } from "../utils/withInitialState";
 import { Action } from "./actions";
 import { appStateReducer } from "./appStateReducer";
 
@@ -52,11 +53,12 @@ const AppStateContext = createContext<AppStateContextProps>(
   {} as AppStateContextProps
 )
 
-type AppStateProps = {
+type AppStateProviderProps = {
   children?: React.ReactNode
+  initialState: AppState
 }
 
-export const AppStateProvider: FC<AppStateProps> = ({ children }) => {
+export const AppStateProvider: FC<AppStateProviderProps> = withInitialState<AppStateProviderProps>({ children, initialState }) => {
   const [state, dispatch] = useImmerReducer(appStateReducer, appData);
   const { draggedItem, lists } = state;
   const getTasksByListId = (id: string) => {
