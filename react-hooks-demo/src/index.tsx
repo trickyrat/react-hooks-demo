@@ -17,7 +17,6 @@ root.render(
         <App />
       </AppStateProvider>
     </DndProvider>
-
   </BrowserRouter>,
   // <React.StrictMode>
   //   <App />
